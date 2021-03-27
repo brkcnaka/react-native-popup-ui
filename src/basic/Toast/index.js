@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 import {
   View,
   Animated,
@@ -6,19 +6,26 @@ import {
   StyleSheet,
   Image,
   Dimensions,
-} from "react-native";
+  StatusBar,
+  Platform,
+} from 'react-native'
 
-const { width, height } = Dimensions.get("screen");
+const { width, height } = Dimensions.get('screen')
+const DEVICE_HEIGHT = Dimensions.get('screen').height
+const STATUS_BAR = StatusBar.currentHeight
+const WINDOW_HEIGHT = Dimensions.get('window').height
+const STATUS_BAR_AND_WİNDOW_HEIGHT = STATUS_BAR + WINDOW_HEIGHT
+const NAV_BAR_HEIGHT = DEVICE_HEIGHT - STATUS_BAR_AND_WİNDOW_HEIGHT
 
 class Toast extends Component {
-  static toastInstance;
+  static toastInstance
 
   static show({ ...config }) {
-    this.toastInstance.start(config);
+    this.toastInstance.start(config)
   }
 
   static hide() {
-    this.toastInstance.hideToast();
+    this.toastInstance.hideToast()
   }
 
   state = {
@@ -26,7 +33,7 @@ class Toast extends Component {
     time: new Animated.Value(this.getPercentage(90, width)),
     // currentTime: 0,
     // currentPercentage: this.getPercentage(90, width),
-  };
+  }
 
   start({ ...config }) {
     this.setState({
@@ -36,15 +43,18 @@ class Toast extends Component {
       icon: config.icon,
       timing: config.timing,
       type: config.type,
-    });
+    })
 
     Animated.spring(this.state.toast, {
-      toValue: height - 150,
+      toValue:
+        Platform.OS === 'android'
+          ? height - (150 + NAV_BAR_HEIGHT)
+          : height - 150,
       bounciness: 15,
       useNativeDriver: true,
-    }).start();
+    }).start()
 
-    const duration = config.timing > 0 ? config.timing : 5000;
+    const duration = config.timing > 0 ? config.timing : 5000
 
     // setInterval(() => {
 
@@ -53,19 +63,19 @@ class Toast extends Component {
     setTimeout(() => {
       // this.runTiming();
       // this.runCurrentTime();
-      this.hideToast();
-    }, duration);
+      this.hideToast()
+    }, duration)
   }
 
   runCurrentTime() {
     let interval = setInterval(() => {
       if (this.state.currentTime >= 5) {
-        clearInterval(interval);
+        clearInterval(interval)
       } else {
-        this.setState({ currentTime: this.state.currentTime + 1 });
-        this.runTiming();
+        this.setState({ currentTime: this.state.currentTime + 1 })
+        this.runTiming()
       }
-    }, 1000);
+    }, 1000)
   }
 
   runTiming() {
@@ -73,7 +83,7 @@ class Toast extends Component {
       toValue:
         this.getPercentage(90, width) -
         this.getPercentage(90, width) / this.state.currentTime,
-    }).start();
+    }).start()
   }
 
   hideToast() {
@@ -81,15 +91,15 @@ class Toast extends Component {
       toValue: height + 500,
       duration: 300,
       useNativeDriver: true,
-    }).start();
+    }).start()
   }
 
   getPercentage(percentage, value) {
-    return (percentage * value) / 100;
+    return (percentage * value) / 100
   }
 
   render() {
-    const { title, text, icon, color } = this.state;
+    const { title, text, icon, color } = this.state
     return (
       <Animated.View
         ref={(c) => (this._root = c)}
@@ -116,19 +126,19 @@ class Toast extends Component {
           ]}
         />
       </Animated.View>
-    );
+    )
   }
 }
 
 const styles = StyleSheet.create({
   toast: {
-    position: "absolute",
-    width: "90%",
-    alignSelf: "center",
+    position: 'absolute',
+    width: '90%',
+    alignSelf: 'center',
     borderRadius: 5,
     minHeight: 100,
-    shadowColor: "#ccc",
-    alignItems: "center",
+    shadowColor: '#ccc',
+    alignItems: 'center',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -136,15 +146,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   timing: {
     borderBottomRightRadius: 5,
     borderBottomLeftRadius: 5,
     height: 10,
-    width: "100%",
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
-    position: "absolute",
+    width: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    position: 'absolute',
     bottom: 0,
     left: 0,
   },
@@ -154,19 +164,19 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   title: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: '#fff',
+    fontWeight: 'bold',
     fontSize: 16,
   },
   subtitle: {
     marginTop: 5,
-    fontWeight: "300",
+    fontWeight: '300',
     fontSize: 13,
-    color: "#fff",
-    fontWeight: "400",
+    color: '#fff',
+    fontWeight: '400',
   },
   img: {
-    resizeMode: "contain",
+    resizeMode: 'contain',
     width: 20,
     height: 20,
   },
@@ -176,9 +186,9 @@ const styles = StyleSheet.create({
     // backgroundColor: '#fff',
     borderRadius: 50,
     marginLeft: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-});
+})
 
-export default Toast;
+export default Toast
